@@ -1,0 +1,122 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
+
+* {
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    font-family: 'Quicksand', sans-serif;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+a {
+    color: inherit;
+}
+
+a:hover {
+    text-decoration: none;
+    color: inherit;
+}
+
+#sudoku {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+    padding: 0px;
+}
+
+.sudoku-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.square {
+    background-color: #f5f5f5;
+    margin: 2px;
+    border-radius: 5px;
+    height: 60px;
+    width: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 18px;
+    border: none;
+    padding-left: 24px;
+    transition: all ease-in-out 0.4s;
+}
+
+.square:hover {
+    background-color: black;
+    color: white;
+    transform: scale(0.95);
+}
+
+.horizontal-divide {
+    margin: 2px;
+    height: 1px;
+    background-color: black;
+}
+
+.vertical-divide {
+    width: 2px;
+    background-color: black;
+    height: 62px;
+    margin: 0px 3px;
+}
+
+.button {
+    background-color: black;
+    color: white;
+    width: 590px;
+    padding: 12px;
+    margin-top: 35px;
+    border-radius: 7px;
+    display: flex;
+    justify-content: center;
+    /* box-shadow: 4px 3px 8px rgba(0,0,0,0.21); */
+    cursor: pointer;
+}
+
+.selected {
+    background-color: black;
+    color: white;
+}
+
+.inp-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 25px;
+}
+
+input {
+    padding: 10px;
+    border: none;
+    border-bottom: 1px solid #4e4b4b;
+    width: 370px;
+}
+
+.button2 {
+    text-align: center;
+    width: 200px;
+    background-color: rgb(46, 16, 66);
+    color: white;
+    padding: 10px;
+    margin-left: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.set {
+    font-weight: 700;
+}
