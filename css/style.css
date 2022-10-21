@@ -115,7 +115,8 @@ input {
 
 .set {
     font-weight: 700;
-    color: rgb(53, 87, 235);
+    color: rgb(255, 255, 255);
+    background-color: rgb(124, 9, 9);
 }
 
 button:disabled {
