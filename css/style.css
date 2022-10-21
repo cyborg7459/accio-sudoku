@@ -80,16 +80,12 @@ a:hover {
     width: 590px;
     padding: 12px;
     margin-top: 35px;
+    margin-bottom: -20px;
     border-radius: 7px;
     display: flex;
     justify-content: center;
     /* box-shadow: 4px 3px 8px rgba(0,0,0,0.21); */
     cursor: pointer;
-}
-
-.selected {
-    background-color: black;
-    color: white;
 }
 
 .inp-group {
@@ -119,4 +115,9 @@ input {
 
 .set {
     font-weight: 700;
+    color: rgb(53, 87, 235);
+}
+
+button:disabled {
+    cursor: not-allowed;
 }

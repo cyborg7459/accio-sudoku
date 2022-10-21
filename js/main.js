@@ -1,10 +1,11 @@
 const squares = document.querySelectorAll('.square');
-const mainBtn = document.getElementById('main-btn');
+const solveBtn = document.getElementById('solve-btn');
+const checkBtn = document.getElementById('check-btn');
 
 let rows = []; 
 let cols = [];   
 let box = [];    
-let grid;
+let grid = [];
 
 squares.forEach((square, idx) => {
     const i = Math.floor(idx/9);
@@ -13,34 +14,21 @@ squares.forEach((square, idx) => {
     square.setAttribute('j', j);
 })
 
-squares.forEach(square => {
-    square.addEventListener('click', () => {
-        squares.forEach(square => {
-            square.classList.remove('selected');
-            value.disabled = false;
-        })
-        square.classList.add('selected');
-    })
-    square.addEventListener('change', () => {
-        const num = 1 * square.value;
-        if(!num && num !== 0) {
-            square.value = 0;
-            return alert("Please enter an integer");
-        }
-        if(num < 0 || num > 9) {
-            square.value = 0;
-            return alert("Please enter a number between 0 and 9");
-        }
-        square.value = num; 
-        square.classList.remove('selected');
-        if(num != 0) square.classList.add('set');
-    })
-})
-
-const clear = () => {
+const addSquaresFunctionality = () => {
     squares.forEach(square => {
-        square.classList.remove('selected');
-    });
+        square.addEventListener('change', () => {
+            const num = 1 * square.value;
+            if(!num && num !== 0) {
+                square.value = 0;
+                return alert("Please enter an integer");
+            }
+            else if(num < 0 || num > 9) {
+                square.value = 0;
+                return alert("Value should lie between 0 and 9");
+            }
+            else if(num === 0) square.value = 0;
+        })
+    })
 }
 
 const initialiseArrays = () => {
@@ -63,48 +51,113 @@ const initialiseArrays = () => {
     }
 }
 
-const fillInitials = () => {
-    let b = true;
-    squares.forEach(square => {
-        const num = 1 * square.value;
-        if(num > 0) {
-            const i = 1 * square.getAttribute('i');
-            const j = 1 * square.getAttribute('j');
-            const boxi = Math.floor(i/3);
-            const boxj = Math.floor(j/3);
-            const bool1 = rows[i].find(x => x === num);
-            const bool2 = cols[j].find(x => x === num);
-            const bool3 = box[boxi][boxj].find(x => x === num);
-            if(!bool1 && !bool2 && !bool3) {
-                rows[i].push(num);
-                cols[j].push(num);
-                box[boxi][boxj].push(num);
-            }
-            else b = false;
-        }
-    })
-    return b;
-}
-
-const createGrid = () => {
-    grid = [];
-    for(let i=0; i<9; i++) {
-        let arr = new Array(9);
-        grid.push(arr);
-    }
-    squares.forEach(square => {
-        const i = square.getAttribute('i');
-        const j = square.getAttribute('j');
-        const num = 1 * square.value;
-        grid[i][j] = num;
-    })
-}
-
 const isValid = (i, j, num) => {
     if(rows[i].find(x => x === num)) return false;
     if(cols[j].find(x => x === num)) return false;
     if(box[Math.floor(i/3)][Math.floor(j/3)].find(x => x === num)) return false;
     return true;
+}
+
+const insertInGrid = (i, j, num) => {
+    grid[i][j] = num;
+    rows[i].push(num);
+    cols[j].push(num);
+    box[Math.floor(i/3)][Math.floor(j/3)].push(num);
+}
+
+const generateNewGrid = () => {
+    for(let i=0; i<9; i++) {
+        let arr = new Array(9);
+        grid.push(arr);
+    }
+    for(let i=0; i<9; i++) {
+        for(let j=0; j<9; j++) {
+            grid[i][j] = 0;
+        }
+    }
+
+    let cnt = 0;
+    while(cnt != 15) {
+        let i = Math.floor(Math.random() * 9);
+        let j = Math.floor(Math.random() * 9);
+        if(grid[i][j] !== 0) continue;
+        else {
+            let num = Math.floor(Math.random() * 9) + 1;
+            if(isValid(i,j,num)) {
+                insertInGrid(i,j,num);
+                cnt++;
+            }
+            else {
+                for(let x=1; x<10; x++) {
+                    if(isValid(i,j,x)) {
+                        insertInGrid(i,j,x);
+                        cnt++;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+}
+
+const fillBoard = () => {
+    squares.forEach(square => {
+        square.setAttribute('set', 'false');
+        square.disabled = false;
+        square.classList.remove('set');
+        const i = square.getAttribute('i');
+        const j = square.getAttribute('j');
+        square.value = grid[i][j];
+        if(grid[i][j] !== 0) {
+            square.disabled = true;
+            square.classList.add('set');
+            square.setAttribute('set', 'true');
+        }
+    })
+}
+
+const startNewGame = () => {
+    initialiseArrays();
+    generateNewGrid();
+    fillBoard();
+    addSquaresFunctionality();
+    checkBtn.disabled = false;
+    solveBtn.innerHTML = "Display Solution"
+}
+
+const checkSolution = () => {
+    let b = false, b1 = false;
+    squares.forEach(square => {
+        if(square.getAttribute('set') === 'false') {
+            const num = 1 * square.value;
+            const i = 1 * square.getAttribute('i');
+            const j = 1 * square.getAttribute('j');
+            if(num === 0) b = true;
+            else {
+                if(rows[i].find(x => x === num)) {
+                    console.log("Duplicate ", num, " in row ", i);
+                    b1 = true;
+                }
+                else if(cols[j].find(x => x === num)) {
+                    console.log("Duplicate ", num, " in col ", j);
+                    b1 = true;
+                }
+                else if(box[Math.floor(i/3)][Math.floor(j/3)].find(x => x === num)) {
+                    console.log("Duplicate ", num, " in box ", i, j);
+                    b1 = true;
+                }
+                else {
+                    rows[i].push(num);
+                    cols[j].push(num);
+                    box[Math.floor(i/3)][Math.floor(j/3)].push(num);
+                }
+            }
+        }
+    })
+    if(b) return alert("Please enter all values");
+    else if(b1) return alert("Wrong solution!! Duplicates found");
+    else alert("Correct solution!!!");
+    checkBtn.disabled = true;
 }
 
 const sudoku = (i, j) => {
@@ -120,10 +173,7 @@ const sudoku = (i, j) => {
     let b = false;
     for(let num = 1; num < 10; num++) {
         if(isValid(i, j, num)) {
-            grid[i][j] = num;
-            rows[i].push(num);
-            cols[j].push(num);
-            box[Math.floor(i/3)][Math.floor(j/3)].push(num);
+            insertInGrid(i, j, num);
             let x = i, y = j+1;
             if(y == 9) {
                 y = 0;
@@ -140,41 +190,28 @@ const sudoku = (i, j) => {
     return b;
 }
 
-const sudokuSolve = () => {
-    return sudoku(0, 0, grid);
-}
-
-const printSudoku = () => {
+const printSolution = () => {
     squares.forEach(square => {
-        const i = 1 * square.getAttribute('i');
-        const j = 1 * square.getAttribute('j');
-        square.value = grid[i][j];
-        square.disabled = true;
+        if(square.getAttribute('set') === 'false') {
+            const i = 1 * square.getAttribute('i');
+            const j = 1 * square.getAttribute('j');
+            square.value = grid[i][j];
+        }
     })
 }
 
-const reset = () => {
-    squares.forEach(square => {
-        square.value = "0";
-        square.classList.remove('set');
-        square.disabled = false;
-    })
-    mainBtn.innerHTML = "Solve sudoku";
-}
-
-mainBtn.addEventListener('click', () => {
-    if(mainBtn.innerHTML === "Reset Sudoku") {
-        reset();
+checkBtn.addEventListener('click', checkSolution)
+solveBtn.addEventListener('click', () => {
+    if(solveBtn.innerHTML === "Reset Sudoku") {
+        startNewGame();
     }
     else {
-        clear();
-        initialiseArrays();
-        let b = fillInitials();
-        if(!b) return alert("Invalid input : Some rows/columns/boxes have duplicate values");
-        createGrid();
-        b = sudokuSolve();
-        if(b) printSudoku();
-        else return alert("This sudoku cannot be solved");
-        mainBtn.innerHTML = "Reset Sudoku";    
+        let b = sudoku(0, 0);
+        if(b) printSolution();
+        else alert("This sudoku cannot be solved");
+        solveBtn.innerHTML = "Reset Sudoku";
+        checkBtn.disabled = true;
     }
 })
+
+startNewGame();
